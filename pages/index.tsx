@@ -2,8 +2,65 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import {useEffect} from 'react'
+import {Html5QrcodeScanner} from "html5-qrcode";
+//https://github.com/scanapp-org/html5-qrcode-react
+//https://scanapp.org/html5-qrcode-docs/docs/intro
+const createConfig = (props) => {
+    let config = {};
+    if (props.fps) {
+        config.fps = props.fps;
+    }
+    if (props.qrbox) {
+        config.qrbox = props.qrbox;
+    }
+    if (props.aspectRatio) {
+        config.aspectRatio = props.aspectRatio;
+    }
+    if (props.disableFlip !== undefined) {
+        config.disableFlip = props.disableFlip;
+    }
+    return config;
+};
 
 const Home: NextPage = () => {
+function onScanSuccess(decodedText, decodedResult) {
+  // handle the scanned code as you like, for example:
+  console.log(`Code matched = ${decodedText}`, decodedResult);
+}
+
+function onScanFailure(error) {
+  // handle scan failure, usually better to ignore and keep scanning.
+  // for example:
+  console.warn(`Code scan error = ${error}`);
+}
+ useEffect(() => {
+/*         // when component mounts
+        const config = createConfig(props);
+        const verbose = props.verbose === true;
+        // Suceess callback is required.
+        if (!(props.qrCodeSuccessCallback)) {
+            throw "qrCodeSuccessCallback is required callback.";
+        } */
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+                                     "reader",
+                                     { fps: 10, qrbox: {width: 250, height: 250} },
+                                       /* verbose= */ false);
+                                   html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+        // cleanup function when component will unmount
+        return () => {
+            html5QrcodeScanner.clear().catch(error => {
+                console.error("Failed to clear html5QrcodeScanner. ", error);
+            });
+        };
+    }, []);
+/* let html5QrcodeScanner = new Html5QrcodeScanner(
+  "reader",
+  { fps: 10, qrbox: {width: 250, height: 250} },
+     *//* verbose= *//*  false);
+html5QrcodeScanner.render(onScanSuccess, onScanFailure); */
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,6 +70,8 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
+        <div id="reader" width="600px"></div>
+
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js! We added this</a>
         </h1>
