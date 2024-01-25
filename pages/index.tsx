@@ -32,7 +32,7 @@ function onScanSuccess(decodedText, decodedResult) {
 function onScanFailure(error) {
   // handle scan failure, usually better to ignore and keep scanning.
   // for example:
-  console.warn(`Code scan error = ${error}`);
+//   console.warn(`Code scan error = ${error}`);
 }
  useEffect(() => {
 /*         // when component mounts
@@ -44,7 +44,7 @@ function onScanFailure(error) {
         } */
         const html5QrcodeScanner = new Html5QrcodeScanner(
                                      "reader",
-                                     { fps: 10, qrbox: {width: 250, height: 250} },
+                                     { fps: 10, qrbox: {width: 900, height: 900} },
                                        /* verbose= */ false);
                                    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
@@ -70,7 +70,7 @@ html5QrcodeScanner.render(onScanSuccess, onScanFailure); */
       </Head>
 
       <main className={styles.main}>
-        <div id="reader" width="600px"></div>
+        <div id="reader" width="1000px"></div>
 
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js! We added this</a>
