@@ -8,22 +8,6 @@ import {Html5QrcodeScanner, Html5Qrcode} from "html5-qrcode";
 //https://scanapp.org/html5-qrcode-docs/docs/intro
 
 // working example : https://codesandbox.io/p/sandbox/scanner-ge82m?file=%2Fsrc%2FApp.js%3A18%2C29
-const createConfig = (props) => {
-    let config = {};
-    if (props.fps) {
-        config.fps = props.fps;
-    }
-    if (props.qrbox) {
-        config.qrbox = props.qrbox;
-    }
-    if (props.aspectRatio) {
-        config.aspectRatio = props.aspectRatio;
-    }
-    if (props.disableFlip !== undefined) {
-        config.disableFlip = props.disableFlip;
-    }
-    return config;
-};
 
 const Home: NextPage = () => {
 function onScanSuccess(decodedText, decodedResult) {
