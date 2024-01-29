@@ -3,26 +3,15 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import {useEffect} from 'react'
-import {Html5QrcodeScanner, Html5Qrcode} from "html5-qrcode";
+import {Html5QrcodeScanner, Html5Qrcode, CameraDevice} from "html5-qrcode";
 //https://github.com/scanapp-org/html5-qrcode-react
 //https://scanapp.org/html5-qrcode-docs/docs/intro
 
 // working example : https://codesandbox.io/p/sandbox/scanner-ge82m?file=%2Fsrc%2FApp.js%3A18%2C29
 
 const Home: NextPage = () => {
-function onScanSuccess(decodedText, decodedResult) {
-  // handle the scanned code as you like, for example:
-  console.log(`Code matched = ${decodedText}`, decodedResult);
-}
-
-function onScanFailure(error) {
-  // handle scan failure, usually better to ignore and keep scanning.
-  // for example:
-//   console.warn(`Code scan error = ${error}`);
-}
-
-let html5QrCode;
-let devices
+let html5QrCode: Html5Qrcode;
+let devices: CameraDevice[];
 const qrConfig = { fps: 10, qrbox: { width: 300, height: 300 } };
  useEffect(() => {
  const init = async() => {
@@ -41,7 +30,7 @@ const qrConfig = { fps: 10, qrbox: { width: 300, height: 300 } };
          await html5QrCode.stop();
      },
      (errorMessage) => {
-     console.error(errorMessage);
+     //console.error(errorMessage);
      }
      );
  }
