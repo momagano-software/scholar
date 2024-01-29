@@ -6,6 +6,8 @@ import {useEffect} from 'react'
 import {Html5QrcodeScanner, Html5Qrcode} from "html5-qrcode";
 //https://github.com/scanapp-org/html5-qrcode-react
 //https://scanapp.org/html5-qrcode-docs/docs/intro
+
+// working example : https://codesandbox.io/p/sandbox/scanner-ge82m?file=%2Fsrc%2FApp.js%3A18%2C29
 const createConfig = (props) => {
     let config = {};
     if (props.fps) {
@@ -36,37 +38,33 @@ function onScanFailure(error) {
 }
 
 let html5QrCode;
+let devices
 const qrConfig = { fps: 10, qrbox: { width: 300, height: 300 } };
  useEffect(() => {
+ const init = async() => {
+    devices = await Html5Qrcode.getCameras();
     html5QrCode = new Html5Qrcode("reader");
+ }
+ init();
  }, []);
 
-   const handleClickAdvanced = () => {
-     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-       props.onResult(decodedText);
-       handleStop();
-     };
+ const handleClickAdvanced = async() => {
      html5QrCode.start(
-       { facingMode: "environment" },
-       qrConfig,
-       qrCodeSuccessCallback
+     devices[0].id,
+     qrConfig,
+     async(decodedText, decodedResult) => {
+         console.log(decodedText);
+         await html5QrCode.stop();
+     },
+     (errorMessage) => {
+     console.error(errorMessage);
+     }
      );
-   };
+ }
 
-     const handleStop = () => {
-       try {
-         html5QrCode
-           .stop()
-           .then((res) => {
-             html5QrCode.clear();
-           })
-           .catch((err) => {
-             console.log(err.message);
-           });
-       } catch (err) {
-         console.log(err);
-       }
-     };
+ const handleStop = async () => {
+    await html5QrCode.stop();
+ }
 
 
   return (
