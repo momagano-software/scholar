@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import {useEffect} from 'react'
-import {Html5QrcodeScanner} from "html5-qrcode";
+import {Html5QrcodeScanner, Html5Qrcode} from "html5-qrcode";
 //https://github.com/scanapp-org/html5-qrcode-react
 //https://scanapp.org/html5-qrcode-docs/docs/intro
 const createConfig = (props) => {
@@ -34,32 +34,40 @@ function onScanFailure(error) {
   // for example:
 //   console.warn(`Code scan error = ${error}`);
 }
- useEffect(() => {
-/*         // when component mounts
-        const config = createConfig(props);
-        const verbose = props.verbose === true;
-        // Suceess callback is required.
-        if (!(props.qrCodeSuccessCallback)) {
-            throw "qrCodeSuccessCallback is required callback.";
-        } */
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-                                     "reader",
-                                     { fps: 10, qrbox: {width: 900, height: 900} },
-                                       /* verbose= */ false);
-                                   html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
-        // cleanup function when component will unmount
-        return () => {
-            html5QrcodeScanner.clear().catch(error => {
-                console.error("Failed to clear html5QrcodeScanner. ", error);
-            });
-        };
-    }, []);
-/* let html5QrcodeScanner = new Html5QrcodeScanner(
-  "reader",
-  { fps: 10, qrbox: {width: 250, height: 250} },
-     *//* verbose= *//*  false);
-html5QrcodeScanner.render(onScanSuccess, onScanFailure); */
+let html5QrCode;
+const qrConfig = { fps: 10, qrbox: { width: 300, height: 300 } };
+ useEffect(() => {
+    html5QrCode = new Html5Qrcode("reader");
+ }, []);
+
+   const handleClickAdvanced = () => {
+     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+       props.onResult(decodedText);
+       handleStop();
+     };
+     html5QrCode.start(
+       { facingMode: "environment" },
+       qrConfig,
+       qrCodeSuccessCallback
+     );
+   };
+
+     const handleStop = () => {
+       try {
+         html5QrCode
+           .stop()
+           .then((res) => {
+             html5QrCode.clear();
+           })
+           .catch((err) => {
+             console.log(err.message);
+           });
+       } catch (err) {
+         console.log(err);
+       }
+     };
+
 
   return (
     <div className={styles.container}>
@@ -70,8 +78,11 @@ html5QrcodeScanner.render(onScanSuccess, onScanFailure); */
       </Head>
 
       <main className={styles.main}>
-        <div id="reader" width="1000px"></div>
-
+        <div id="reader" style={{width: '300px'}}></div>
+      <button onClick={() => handleClickAdvanced()}>
+        click pro
+      </button>
+      <button onClick={() => handleStop()}>stop pro</button>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js! We added this</a>
         </h1>
